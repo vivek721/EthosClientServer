@@ -6,8 +6,6 @@ import (
 	"log"
 )
 
-var ACC Account
-
 func init() {
 
 	SetupMyRpcgetBalanceReply(getBalanceReply)
