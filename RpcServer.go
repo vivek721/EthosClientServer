@@ -4,63 +4,35 @@ import (
 	"ethos/altEthos"
 	"ethos/syscall"
 	"log"
-	// "math/rand"
 )
-
-// var ACCOUNTS_LIST_SERVER []Account
 
 func init() {
 
-	// SetupMyRpcmakeAccount(makeAccount)
 	SetupMyRpcgetBalance(getBalance)
 	SetupMyRpctransfer(transfer)
 
 }
 
 func getBalance(account Account) MyRpcProcedure {
-	log.Printf("MyRpcService : getBalance called\n")
-
-	// // Get balance from account O(n)
-	// for i := 0; i < len(ACCOUNTS_LIST); i++ {
-	// 	if ACCOUNTS_LIST[i].AccountID == accountID {
-	// 		return &MyRpcGetBalanceReply{ACCOUNTS_LIST[i].AccountBalance}
-	// 	}
-	// }
-	// return &MyRpcGetBalanceReply{nil}
-
+	// log.Printf("MyRpcService : getBalance called\n")
 	return &MyRpcgetBalanceReply{account.AccountBalance}
 }
 
-// func makeAccount() MyRpcProcedure {
-
-// 	initBalance := uint64(500)
-
-// 	var account Account
-
-// 	account.AccountID = 29375092375
-// 	account.AccountBalance = initBalance
-
-// 	// for i := 0; i < int(count); i++ {
-
-// 	// 	// Generate a random balance for the account
-
-// 	// 	// Append account to array
-// 	// 	ACCOUNTS_LIST_SERVER = append(ACCOUNTS_LIST, account)
-// 	// }
-
-// 	return &MyRpcmakeAccountReply{account}
-// }
-
 func transfer(fromAcc Account, toAcc Account, amount uint64) MyRpcProcedure {
+	log.Printf("Balance for %v : %v\n", fromAcc.AccountID, fromAcc.AccountBalance)
+	log.Printf("Balance for %v : %v\n", toAcc.AccountID, toAcc.AccountBalance)
+	log.Printf("Amount of $%v transferred from %v to %v\n", amount, fromAcc.AccountID, toAcc.AccountID)
+	var status bool
 	if fromAcc.AccountBalance >= amount {
 		fromAcc.AccountBalance -= amount
 		toAcc.AccountBalance += amount
-		log.Printf("Amount transferred between %v and %v\n", fromAcc.AccountID, toAcc.AccountID)
+		status = true
 	} else {
 		log.Printf("Could not transfer, negative\n")
+		status = false
 	}
 
-	return &MyRpctransferReply{fromAcc.AccountBalance, toAcc.AccountBalance}
+	return &MyRpctransferReply{fromAcc.AccountBalance, toAcc.AccountBalance, status}
 }
 
 func main() {
@@ -79,7 +51,6 @@ func main() {
 			log.Printf("Error_calling_Import:_%v\n", status)
 			altEthos.Exit(status)
 		}
-		log.Printf("listening fd %v", listeningFd)
 		log.Printf("MyRpcService:_new_connection_accepted\n")
 
 		t := MyRpc{}
